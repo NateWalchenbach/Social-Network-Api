@@ -10,10 +10,7 @@ module.exports = {
   // GET a single user
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      .populate([
-        { path: 'friends', select: 'username email' },
-        { path: 'thoughts' },
-      ])
+      // .populate('thought')
       .select('-__v')
       .then(async (user) =>
         !user

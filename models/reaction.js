@@ -13,7 +13,7 @@ const reactionSchema = new Schema(
       required: [true, 'A reaction must have a body'],
       maxlength: [
         280,
-        'Please keep your reaction shorter than 280 characters...',
+        'Please keep your reaction shorter than 280 characters... thanks!',
       ],
     },
     username: {

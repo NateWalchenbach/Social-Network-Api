@@ -8,14 +8,13 @@ module.exports = {
   },
   /** GET to get a single thought by its _id */
   getSingleThought(req, res) {
-    const { thoughtId } = req.params;
-    Thought.findById(thoughtId)
+    Thought.findOne({ id: req.params.id })
+      .select('-__v')
       .then((thought) =>
         !thought
-          ? res.status(404).json({ message: 'thoughtId not found' })
+          ? res.status(404).json({ message: 'No thought with that ID' })
           : res.json(thought)
-      )
-      .catch((err) => res.status(500).json(err));
+      );
   },
 
   createThought(req, res) {
