@@ -1,0 +1,23 @@
+{
+  "name": "social-network-api",
+  "version": "1.0.0",
+  "description": "AS A social media startup I WANT an API for my social network that uses a NoSQL database SO THAT my website can handle large amounts of unstructured data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NateWalchenbach/Social-Network-Api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NateWalchenbach/Social-Network-Api/issues"
+  },
+  "homepage": "https://github.com/NateWalchenbach/Social-Network-Api#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
