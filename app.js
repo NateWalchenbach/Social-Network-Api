@@ -1,6 +1,6 @@
 const express = require('express');
-
 const app = express();
+const routes = require('./routes');
 
 // 1) Middleware
 app.use(express.json());
@@ -14,6 +14,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// 2) PUT ROUTES HERE
+app.use(routes);
 
 module.exports = app;

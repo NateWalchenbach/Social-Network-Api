@@ -7,8 +7,7 @@ const {
   deleteUser,
   addFriend,
   removeFriend,
-} = require('../controllers/userController');
-const userController = require('../controllers/userController');
+} = require('../../controllers/userController');
 
 const router = express.Router();
 

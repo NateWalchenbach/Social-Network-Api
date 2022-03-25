@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 const User = require('./User');
+const reactionSchema = require('./reaction');
 
-const thoughtSchema = new mongoose.Schema(
+const thoughtSchema = new Schema(
   {
     thoughtText: {
       type: String,

@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
+const reactionSchema = require('./reaction');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   username: {
     type: String,
     unique: true,
@@ -30,9 +31,11 @@ const userSchema = new mongoose.Schema({
       },
     ],
   },
-  toJSON: {
-    virtuals: true,
-  },
+
+  // THROWING AN ERROR!
+  // toJSON: {
+  //   virtuals: true,
+  // },
 });
 
 userSchema.virtual('friendCount').get(function () {

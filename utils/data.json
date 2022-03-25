@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "username": "JohnDoe",
+      "email": "johndoe@gmail.com"
+    },
+    {
+      "username": "JesseMunden",
+      "email": "Jesse@gmail.com"
+    }
+  ],
+  "thoughts": [
+    {
+      "thoughtText": "I am cool!",
+      "username": "JesseMunden",
+      "reactions": [
+        {
+          "reactionBody": "Of course you do",
+          "username": "JesseMunden",
+          "reactionId": "62390d0ad32456820d173a2f"
+        }
+      ]
+    },
+    {
+      "thoughtText": "I am the master commander",
+      "username": "JesseMunden"
+    }
+  ]
+}
