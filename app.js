@@ -3,6 +3,7 @@ const app = express();
 const routes = require('./routes');
 
 // 1) Middleware
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use((req, res, next) => {
   console.log('Hello from the middleware 👋');

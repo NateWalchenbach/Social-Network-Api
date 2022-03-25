@@ -1,90 +1,107 @@
+const { Types } = require('mongoose');
 const { User, Thought } = require('../models');
 
 module.exports = {
+  // /api/users
   // GET all users
   getUsers(req, res) {
     User.find()
+      .select('-__v')
       .then((users) => res.json(users))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
-  // GET a single user
+  // GET a single user by its _id and populated thought and friend data
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      // .populate('thought')
       .select('-__v')
-      .then(async (user) =>
+      .populate('thoughts')
+      .then((user) =>
         !user
-          ? res.status(404).json({ message: 'No user with that id' })
-          : res.json({
-              user,
-            })
+          ? res.status(404).json({ message: 'No user with that ID!' })
+          : res.json(user)
       )
       .catch((err) => {
         console.log(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
       });
   },
   // POST a new user
   createUser(req, res) {
     User.create(req.body)
       .then((user) => res.json(user))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
+      });
   },
-  // PUT an update
+  // PUT to update a user by its _id
   updateUser(req, res) {
-    User.findByIdAndUpdate(
-      req.params.userId,
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
       { $set: req.body },
       { runValidators: true, new: true }
     )
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: 'No user with that id' })
-          : res.json(user)
+      .then((course) =>
+        !course
+          ? res.status(404).json({ message: 'No user with this id!' })
+          : res.json(course)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
-  // DELETE a user by its ID
+  // DELETE to remove user by its _id (remove a user's associated thoughts when deleted)
   deleteUser(req, res) {
-    User.findByIdAndDelete(req.params.userId)
+    User.findOneAndDelete({ _id: req.params.userId })
       .then((user) =>
         !user
-          ? res.status(404).json({ message: 'No user with that id' })
-          : res.json({ user, message: `Deleted user ${user.id}` })
+          ? res.status(404).json({ message: 'No user with that ID' })
+          : Thought.deleteMany({ _id: { $in: user.thoughts } })
       )
-      .catch((err) => res.status(500).json(err));
+      .then(() => res.json({ message: 'User and thoughts deleted!' }))
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
-  // POST a friend
+
+  // /api/users/:userId/friends/:friendId
+  // POST to add a new friend to a user's friend list
   addFriend(req, res) {
-    User.findByIdAndUpdate(
-      req.params.userId,
-      {
-        $addToSet: { friends: req.body },
-      },
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
       .then((user) =>
         !user
-          ? res.status(404).json({ message: 'No user with that id' })
+          ? res.status(404).json({ message: 'No user with this id!' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
-  // DELETE a user from its friends list
+  // DELETE to remove a friend from a user's friend list
   removeFriend(req, res) {
-    const { userId, friendId } = req.params;
-    User.findByIdAndUpdate(
-      userId,
-      {
-        $pull: { friends: friendId },
-      },
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
       .then((user) =>
         !user
-          ? res.status(404).json({ message: 'No user what that id' })
+          ? res.status(404).json({ message: 'No user with this id!' })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
 };

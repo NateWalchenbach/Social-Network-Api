@@ -1,30 +1,54 @@
-const { Schema, model } = require('mongoose');
-const User = require('./User');
-const reactionSchema = require('./reaction');
+const { Schema, Types, model } = require('mongoose');
+const dayjs = require('dayjs');
 
-const thoughtSchema = new Schema(
+// Reaction Schema
+const reactionSchema = new Schema(
   {
-    thoughtText: {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
+    },
+    reactionBody: {
       type: String,
-      required: [true, 'A thought must have text'],
-      minlength: [1, 'Please enter your thought'],
-      maxlength: [280, 'Please have thoughts less than 280 characters...'],
+      required: true,
+      minLength: 1,
+      maxLength: 280,
+    },
+    username: {
+      type: String,
+      required: true,
     },
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (date) => date.toLocaleString(),
+      get: (timestamp) => dayjs(timestamp).format('MMM D, YYYY h:mm A'),
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+    },
+    id: false,
+  }
+);
+
+// Thought Schema
+const thoughtSchema = new Schema(
+  {
+    thoughtText: {
+      type: String,
+      required: true,
+      minLength: 1,
+      maxLength: 280,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp) => dayjs(timestamp).format('MMM D, YYYY h:mm A'),
     },
     username: {
-      type: Schema.Types.String,
-      ref: 'User',
-      required: [true, 'A thought must be linked to a username...'],
-      validate: {
-        validator: function (username) {
-          return User.exists({ username });
-        },
-        message: 'User does not exist',
-      },
+      type: String,
+      required: true,
     },
     reactions: [reactionSchema],
   },
@@ -33,23 +57,16 @@ const thoughtSchema = new Schema(
       virtuals: true,
       getters: true,
     },
+    id: false,
   }
 );
 
-thoughtSchema.post('save', function (thought, next) {
-  User.findOneAndUpdate(
-    { username: thought.username },
-    { $addToSet: { thoughts: thought } },
-    { select: '-username' },
-    next()
-  );
-});
-
-// Friends virtual
 thoughtSchema.virtual('reactionCount').get(function () {
-  return this.reactions && this.reactions.length;
+  return this.reactions.length;
 });
 
-const Thought = model('Thought', thoughtSchema);
+const Thought = model('thought', thoughtSchema);
+
+const handleError = (err) => console.error(err);
 
 module.exports = Thought;

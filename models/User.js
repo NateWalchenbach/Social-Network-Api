@@ -1,22 +1,20 @@
-const { Schema, model } = require('mongoose');
-const reactionSchema = require('./reaction');
+const { Schema, Types, model } = require('mongoose');
+var validator = require('validator');
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: function (input) {
-        return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(input);
-      },
-      message: 'Please enter a valid email address',
+// User Schema
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      validate: [validator.isEmail, 'Please provide a valid email.'],
     },
     thoughts: [
       {
@@ -27,21 +25,24 @@ const userSchema = new Schema({
     friends: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
       },
     ],
   },
-
-  // THROWING AN ERROR!
-  // toJSON: {
-  //   virtuals: true,
-  // },
-});
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
+);
 
 userSchema.virtual('friendCount').get(function () {
-  return this.friends && this.friends.length;
+  return this.friends.length;
 });
 
-const User = model('User', userSchema);
+const User = model('user', userSchema);
+
+const handleError = (err) => console.error(err);
 
 module.exports = User;
